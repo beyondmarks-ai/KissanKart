@@ -68,12 +68,21 @@ export function HeroSection() {
   const { user, profile } = useAuth();
   const { t, getLocalizedPath } = useLanguage();
   const isLoggedInCustomer = user && profile?.role === 'customer';
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    // Set video playback speed to 1.4x
+    if (videoRef.current) {
+      videoRef.current.playbackRate = 1.4;
+    }
+  }, []);
 
   return (
     <section className="relative min-h-screen overflow-hidden">
       {/* Full Background Video */}
       <div className="absolute inset-0">
         <video
+          ref={videoRef}
           key={Date.now()}
           autoPlay
           muted

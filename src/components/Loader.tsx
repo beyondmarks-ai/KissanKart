@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const welcomeMessages = [
@@ -16,7 +16,14 @@ interface LoaderProps {
 
 export function Loader({ onLoadingComplete }: LoaderProps) {
     const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
-    const [videoKey] = useState(Date.now()); // Unique key to force video reload
+    const videoRef = useRef<HTMLVideoElement>(null);
+
+    useEffect(() => {
+        // Set video playback speed to 1.4x
+        if (videoRef.current) {
+            videoRef.current.playbackRate = 1.4;
+        }
+    }, []);
 
     useEffect(() => {
         // Cycle through welcome messages
@@ -51,7 +58,8 @@ export function Loader({ onLoadingComplete }: LoaderProps) {
                     transition={{ duration: 0.6, ease: 'easeOut' }}
                 >
                     <video
-                        key={videoKey}
+                        ref={videoRef}
+                        key={Date.now()}
                         autoPlay
                         muted
                         playsInline
