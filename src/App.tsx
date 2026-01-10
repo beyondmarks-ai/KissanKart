@@ -2,14 +2,15 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { CartProvider } from "@/contexts/CartContext";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ThemeProvider } from "@/components/ThemeProvider";
-import { LanguageLayout } from "@/components/LanguageLayout";
-import { LanguageRedirect } from "@/components/LanguageRedirect";
+import { LanguageProvider } from "@/contexts/LanguageContext";
 import { ScrollToTop } from "@/components/ScrollToTop";
 import { Loader } from "@/components/Loader";
+import { Navbar } from "@/components/Navbar";
+import { CartPanel } from "@/components/CartPanel";
 import { useState, useEffect } from "react";
 import Index from "./pages/Index";
 import Shop from "./pages/Shop";
@@ -20,23 +21,6 @@ import FarmDetail from "./pages/FarmDetail";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
-
-// Language route wrapper component
-function LanguageRoutes() {
-  return (
-    <LanguageLayout>
-      <Routes>
-        <Route index element={<Index />} />
-        <Route path="shop" element={<Shop />} />
-        <Route path="farm/:farmId" element={<FarmDetail />} />
-        <Route path="auth" element={<Auth />} />
-        <Route path="dashboard" element={<Dashboard />} />
-        <Route path="checkout" element={<Checkout />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </LanguageLayout>
-  );
-}
 
 const App = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -60,24 +44,25 @@ const App = () => {
       <QueryClientProvider client={queryClient}>
         <TooltipProvider>
           <AuthProvider>
-            <CartProvider>
-              <Toaster />
-              <Sonner />
-              {isLoading && showLoader && <Loader onLoadingComplete={handleLoadingComplete} />}
-              <BrowserRouter>
-                <ScrollToTop />
-                <Routes>
-                  {/* Redirect root to default language */}
-                  <Route path="/" element={<LanguageRedirect />} />
-
-                  {/* Language-prefixed routes */}
-                  <Route path="/:lang/*" element={<LanguageRoutes />} />
-
-                  {/* Catch-all for non-language routes */}
-                  <Route path="*" element={<Navigate to="/en" replace />} />
-                </Routes>
-              </BrowserRouter>
-            </CartProvider>
+            <LanguageProvider>
+              <CartProvider>
+                <Toaster />
+                <Sonner />
+                {isLoading && showLoader && <Loader onLoadingComplete={handleLoadingComplete} />}
+                <BrowserRouter>
+                  <ScrollToTop />
+                  <Routes>
+                    <Route path="/" element={<Index />} />
+                    <Route path="/shop" element={<Shop />} />
+                    <Route path="/farm/:farmId" element={<FarmDetail />} />
+                    <Route path="/auth" element={<Auth />} />
+                    <Route path="/dashboard" element={<Dashboard />} />
+                    <Route path="/checkout" element={<Checkout />} />
+                    <Route path="*" element={<NotFound />} />
+                  </Routes>
+                </BrowserRouter>
+              </CartProvider>
+            </LanguageProvider>
           </AuthProvider>
         </TooltipProvider>
       </QueryClientProvider>
