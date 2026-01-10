@@ -1,0 +1,195 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Fonts loaded via index.html for better performance */
+
+@layer base {
+  :root {
+    --background: 120 20% 99%;
+    --foreground: 150 10% 15%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 150 10% 15%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 150 10% 15%;
+
+    --primary: 122 39% 34%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 120 25% 95%;
+    --secondary-foreground: 122 39% 25%;
+
+    --muted: 120 15% 96%;
+    --muted-foreground: 150 5% 45%;
+
+    --accent: 122 39% 90%;
+    --accent-foreground: 122 39% 25%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 120 15% 90%;
+    --input: 120 15% 90%;
+    --ring: 122 39% 34%;
+
+    --radius: 0.75rem;
+
+    /* Custom KissanKart tokens */
+    --kisan-green: 122 39% 34%;
+    --kisan-green-light: 122 39% 45%;
+    --kisan-green-dark: 122 39% 25%;
+    --kisan-leaf: 88 50% 53%;
+    --kisan-orange: 24 95% 53%;
+    --kisan-earth: 30 25% 35%;
+    
+    /* Gradients */
+    --gradient-hero: linear-gradient(135deg, hsl(122 39% 34%) 0%, hsl(88 50% 45%) 100%);
+    --gradient-card: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(120 25% 98%) 100%);
+    --gradient-subtle: linear-gradient(180deg, hsl(120 20% 99%) 0%, hsl(120 15% 96%) 100%);
+    
+    /* Shadows */
+    --shadow-sm: 0 1px 2px 0 hsl(150 10% 15% / 0.05);
+    --shadow-md: 0 4px 6px -1px hsl(150 10% 15% / 0.1), 0 2px 4px -2px hsl(150 10% 15% / 0.1);
+    --shadow-lg: 0 10px 15px -3px hsl(150 10% 15% / 0.1), 0 4px 6px -4px hsl(150 10% 15% / 0.1);
+    --shadow-card: 0 4px 20px -2px hsl(122 39% 34% / 0.08);
+    --shadow-card-hover: 0 12px 30px -4px hsl(122 39% 34% / 0.15);
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    --background: 150 10% 8%;
+    --foreground: 120 15% 95%;
+
+    --card: 150 10% 12%;
+    --card-foreground: 120 15% 95%;
+
+    --popover: 150 10% 12%;
+    --popover-foreground: 120 15% 95%;
+
+    --primary: 122 39% 45%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 150 10% 18%;
+    --secondary-foreground: 120 15% 90%;
+
+    --muted: 150 10% 18%;
+    --muted-foreground: 120 10% 60%;
+
+    --accent: 122 30% 20%;
+    --accent-foreground: 122 39% 70%;
+
+    --destructive: 0 62% 30%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 150 10% 20%;
+    --input: 150 10% 20%;
+    --ring: 122 39% 45%;
+    
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scrollbar-gutter: stable;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    font-family: 'Noto Sans', 'Noto Sans Devanagari', 'Noto Sans Kannada', system-ui, sans-serif;
+    overflow-y: scroll;
+  }
+
+  /* Better line-height for Indian scripts (Hindi/Kannada) */
+  html:lang(hi) body,
+  html:lang(kn) body,
+  [lang="hi"],
+  [lang="kn"] {
+    line-height: 1.7;
+  }
+
+  /* Ensure Indian script text has proper vertical spacing */
+  html:lang(hi) h1, html:lang(hi) h2, html:lang(hi) h3,
+  html:lang(kn) h1, html:lang(kn) h2, html:lang(kn) h3,
+  [lang="hi"] h1, [lang="hi"] h2, [lang="hi"] h3,
+  [lang="kn"] h1, [lang="kn"] h2, [lang="kn"] h3 {
+    line-height: 1.4;
+  }
+
+  html:lang(hi) p, html:lang(kn) p,
+  [lang="hi"] p, [lang="kn"] p {
+    line-height: 1.8;
+  }
+
+  /* Buttons and small text for Indian scripts */
+  html:lang(hi) button, html:lang(kn) button,
+  [lang="hi"] button, [lang="kn"] button {
+    line-height: 1.5;
+    padding-top: 0.625rem;
+    padding-bottom: 0.625rem;
+  }
+
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  
+  .gradient-hero {
+    background: var(--gradient-hero);
+  }
+  
+  .gradient-card {
+    background: var(--gradient-card);
+  }
+  
+  .shadow-card {
+    box-shadow: var(--shadow-card);
+  }
+  
+  .shadow-card-hover {
+    box-shadow: var(--shadow-card-hover);
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: hsl(var(--muted));
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted-foreground) / 0.3);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground) / 0.5);
+}
