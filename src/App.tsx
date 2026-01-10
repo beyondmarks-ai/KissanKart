@@ -44,12 +44,12 @@ const App = () => {
       <QueryClientProvider client={queryClient}>
         <TooltipProvider>
           <AuthProvider>
-            <LanguageProvider>
-              <CartProvider>
-                <Toaster />
-                <Sonner />
-                {isLoading && showLoader && <Loader onLoadingComplete={handleLoadingComplete} />}
-                <BrowserRouter>
+            <CartProvider>
+              <Toaster />
+              <Sonner />
+              {isLoading && showLoader && <Loader onLoadingComplete={handleLoadingComplete} />}
+              <BrowserRouter>
+                <LanguageProvider>
                   <ScrollToTop />
                   <Routes>
                     <Route path="/" element={<Index />} />
@@ -60,9 +60,9 @@ const App = () => {
                     <Route path="/checkout" element={<Checkout />} />
                     <Route path="*" element={<NotFound />} />
                   </Routes>
-                </BrowserRouter>
-              </CartProvider>
-            </LanguageProvider>
+                </LanguageProvider>
+              </BrowserRouter>
+            </CartProvider>
           </AuthProvider>
         </TooltipProvider>
       </QueryClientProvider>
