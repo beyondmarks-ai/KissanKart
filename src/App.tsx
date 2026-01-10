@@ -9,8 +9,6 @@ import { ThemeProvider } from "@/components/ThemeProvider";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { ScrollToTop } from "@/components/ScrollToTop";
 import { Loader } from "@/components/Loader";
-import { Navbar } from "@/components/Navbar";
-import { CartPanel } from "@/components/CartPanel";
 import { useState, useEffect } from "react";
 import Index from "./pages/Index";
 import Shop from "./pages/Shop";

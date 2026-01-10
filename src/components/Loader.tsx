@@ -19,13 +19,6 @@ export function Loader({ onLoadingComplete }: LoaderProps) {
     const videoRef = useRef<HTMLVideoElement>(null);
 
     useEffect(() => {
-        // Set video playback speed to 1.4x
-        if (videoRef.current) {
-            videoRef.current.playbackRate = 1.4;
-        }
-    }, []);
-
-    useEffect(() => {
         // Cycle through welcome messages
         const interval = setInterval(() => {
             setCurrentMessageIndex((prev) => (prev + 1) % welcomeMessages.length);
@@ -38,6 +31,13 @@ export function Loader({ onLoadingComplete }: LoaderProps) {
         setTimeout(() => {
             onLoadingComplete();
         }, 500);
+    };
+
+    const handleLoadedMetadata = () => {
+        // Set playback speed as soon as metadata is loaded
+        if (videoRef.current) {
+            videoRef.current.playbackRate = 1.4;
+        }
     };
 
     const currentMessage = welcomeMessages[currentMessageIndex];
@@ -59,10 +59,12 @@ export function Loader({ onLoadingComplete }: LoaderProps) {
                 >
                     <video
                         ref={videoRef}
-                        key={Date.now()}
+                        key="loader-video"
                         autoPlay
                         muted
                         playsInline
+                        preload="auto"
+                        onLoadedMetadata={handleLoadedMetadata}
                         onEnded={handleVideoEnd}
                         className="w-full h-auto"
                     >

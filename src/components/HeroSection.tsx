@@ -70,12 +70,12 @@ export function HeroSection() {
   const isLoggedInCustomer = user && profile?.role === 'customer';
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  useEffect(() => {
-    // Set video playback speed to 1.4x
+  const handleLoadedMetadata = () => {
+    // Set playback speed as soon as metadata is loaded
     if (videoRef.current) {
       videoRef.current.playbackRate = 1.4;
     }
-  }, []);
+  };
 
   return (
     <section className="relative min-h-screen overflow-hidden">
@@ -83,11 +83,13 @@ export function HeroSection() {
       <div className="absolute inset-0">
         <video
           ref={videoRef}
-          key={Date.now()}
+          key="hero-video"
           autoPlay
           muted
           playsInline
           loop={false}
+          preload="auto"
+          onLoadedMetadata={handleLoadedMetadata}
           className="h-full w-full object-cover"
         >
           <source src="/Farm.mp4" type="video/mp4" />
@@ -154,7 +156,7 @@ export function HeroSection() {
                 className="group bg-kisan-leaf text-white shadow-2xl shadow-kisan-leaf/30 hover:bg-kisan-leaf/90 hover:shadow-kisan-leaf/40 transition-all duration-300 text-lg px-8 py-6"
                 asChild
               >
-                <Link to={getLocalizedPath('/shop')}>
+                <Link to="/shop">
                   {t('hero.shopNow')}
                   <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
                 </Link>
@@ -172,7 +174,7 @@ export function HeroSection() {
                   className="border-2 border-white/30 bg-white/10 text-white backdrop-blur-sm hover:bg-white/20 hover:border-white/50 text-lg px-8 py-6"
                   asChild
                 >
-                  <Link to={getLocalizedPath('/auth')}>{t('hero.joinFarmer')}</Link>
+                  <Link to="/auth">{t('hero.joinFarmer')}</Link>
                 </Button>
               </motion.div>
             )}
