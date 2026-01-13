@@ -7,6 +7,7 @@ export const mockProducts: Product[] = [
     description: 'Fresh organic tomatoes grown with care. Perfect for salads, curries, and everyday cooking.',
     category: 'vegetable',
     price: 40,
+    original_price: 50, // 20% OFF
     unit: 'kg',
     image_url: 'https://images.unsplash.com/photo-1592841200221-a6898f307baa?auto=format&fit=crop&w=800&q=80',
     farmer_id: 'mock-farmer',
@@ -20,6 +21,7 @@ export const mockProducts: Product[] = [
     description: 'Pahadi Aloo - Premium hill potatoes with excellent taste and texture.',
     category: 'vegetable',
     price: 30,
+    original_price: 40, // 25% OFF
     unit: 'kg',
     image_url: 'https://images.unsplash.com/photo-1582515073490-39981397c445?w=400&h=400&fit=crop',
     farmer_id: 'mock-farmer',
@@ -33,6 +35,7 @@ export const mockProducts: Product[] = [
     description: 'Green Palak bundles - Fresh and nutritious leafy greens packed with iron.',
     category: 'vegetable',
     price: 20,
+    original_price: 25, // 20% OFF
     unit: 'bundle',
     image_url: 'https://images.unsplash.com/photo-1576045057995-568f588f82fb?w=400&h=400&fit=crop',
     farmer_id: 'mock-farmer',
@@ -72,6 +75,7 @@ export const mockProducts: Product[] = [
     description: 'Fresh orange carrots - Sweet, crunchy and full of vitamins.',
     category: 'vegetable',
     price: 35,
+    original_price: 45, // 22% OFF
     unit: 'kg',
     image_url: 'https://images.unsplash.com/photo-1598170845058-32b9d6a5da37?w=400&h=400&fit=crop',
     farmer_id: 'mock-farmer',
@@ -98,6 +102,7 @@ export const mockProducts: Product[] = [
     description: 'Fresh red onions - Essential for every kitchen.',
     category: 'vegetable',
     price: 25,
+    original_price: 32, // 22% OFF
     unit: 'kg',
     image_url: 'https://images.unsplash.com/photo-1618512496248-a07fe83aa8cb?w=400&h=400&fit=crop',
     farmer_id: 'mock-farmer',

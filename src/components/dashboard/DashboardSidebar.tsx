@@ -1,4 +1,4 @@
-import { Package, LayoutDashboard, Settings, LogOut, TrendingUp, Leaf, Sparkles } from 'lucide-react';
+import { Package, LayoutDashboard, Settings, LogOut, TrendingUp, Leaf, Sparkles, ShieldCheck, User, MessageSquare } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import {
@@ -17,12 +17,16 @@ import {
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/components/ui/tooltip';
+import kissanKartLogo from '@/assets/kissankart-logo.png';
 
 const menuItems = [
   { title: 'Overview', tab: '', icon: LayoutDashboard, color: 'from-primary to-primary/80' },
   { title: 'Products', tab: 'products', icon: Package, color: 'from-kisan-orange to-orange-500' },
   { title: 'Analytics', tab: 'analytics', icon: TrendingUp, color: 'from-kisan-leaf to-green-500' },
-  { title: 'Settings', tab: 'settings', icon: Settings, color: 'from-purple-500 to-purple-600' },
+  { title: 'KYC Verification', tab: 'kyc', icon: ShieldCheck, color: 'from-blue-500 to-blue-600' },
+  { title: 'Profile', tab: 'profile', icon: User, color: 'from-indigo-500 to-indigo-600' },
+  { title: 'Support', tab: 'support', icon: MessageSquare, color: 'from-pink-500 to-pink-600' },
+  { title: 'Settings', tab: 'settings', icon: Settings, color: 'from-gray-500 to-gray-600' },
 ];
 
 export function DashboardSidebar() {
@@ -51,16 +55,17 @@ export function DashboardSidebar() {
         {/* Header */}
         <SidebarHeader className="border-b border-border/50 p-4">
           <div className="flex items-center gap-3">
-            <div className="relative flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-primary/80 text-primary-foreground shadow-lg shadow-primary/25">
-              <Leaf className="h-6 w-6" />
-              <div className="absolute -bottom-0.5 -right-0.5 h-4 w-4 rounded-full bg-kisan-leaf flex items-center justify-center shadow-sm">
-                <Sparkles className="h-2.5 w-2.5 text-white" />
-              </div>
-            </div>
+            <img
+              src={kissanKartLogo}
+              alt="KissanKart"
+              className="h-10 w-10 object-contain"
+            />
             {!collapsed && (
-              <div className="animate-fade-in">
-                <h2 className="font-bold text-foreground tracking-tight">KissanKart</h2>
-                <p className="text-xs text-muted-foreground font-medium">Farmer Dashboard</p>
+              <div className="animate-fade-in flex flex-col">
+                <span className="font-bold text-foreground text-lg leading-none">
+                  Kissan<span className="text-primary">Kart</span>
+                </span>
+                <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wide">Farmer Dashboard</p>
               </div>
             )}
           </div>
@@ -78,7 +83,7 @@ export function DashboardSidebar() {
               <SidebarMenu className="space-y-1">
                 {menuItems.map((item) => {
                   const active = isActive(item.tab);
-                  
+
                   const buttonContent = (
                     <SidebarMenuButton
                       onClick={() => handleNavigate(item.tab)}
@@ -91,8 +96,8 @@ export function DashboardSidebar() {
                     >
                       <div className={cn(
                         'flex h-8 w-8 items-center justify-center rounded-lg transition-all',
-                        active 
-                          ? 'bg-white/20' 
+                        active
+                          ? 'bg-white/20'
                           : 'bg-muted/50 group-hover:bg-muted'
                       )}>
                         <item.icon className={cn(
@@ -150,7 +155,7 @@ export function DashboardSidebar() {
               </div>
             </div>
           )}
-          
+
           {collapsed ? (
             <Tooltip>
               <TooltipTrigger asChild>

@@ -12,13 +12,17 @@ import { AddProductDialog } from '@/components/dashboard/AddProductDialog';
 import { OverviewContent } from '@/components/dashboard/OverviewContent';
 import { AnalyticsContent } from '@/components/dashboard/AnalyticsContent';
 import { SettingsContent } from '@/components/dashboard/SettingsContent';
+import { KYCContent } from '@/components/dashboard/KYCContent';
+import { ProfileContent } from '@/components/dashboard/ProfileContent';
+import { SupportContent } from '@/components/dashboard/SupportContent';
+import { getProductsByFarmId } from '@/data/mockFarms';
 
 export default function FarmerDashboard() {
   const { user, profile, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const currentTab = searchParams.get('tab') || '';
-  
+
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
@@ -51,8 +55,13 @@ export default function FarmerDashboard() {
   }, [user, profile]);
 
   const fetchProducts = async () => {
+    // TEMPORARY: Use mock data for "farm-1" to simulate "My Products"
+    // This ensures we only show products "listed" by the logged-in farmer
+    setLoading(false);
+    setProducts(getProductsByFarmId('farm-1'));
+
+    /* Original Supabase Query - Commented out for demo
     if (!user) return;
-    
     setLoading(false);
     const { data, error } = await supabase
       .from('products')
@@ -66,6 +75,7 @@ export default function FarmerDashboard() {
     } else {
       setProducts(data as Product[]);
     }
+    */
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -140,6 +150,9 @@ export default function FarmerDashboard() {
       case 'products': return 'Products';
       case 'analytics': return 'Analytics';
       case 'settings': return 'Settings';
+      case 'kyc': return 'KYC Verification';
+      case 'profile': return 'My Profile';
+      case 'support': return 'Support & Help';
       default: return 'Overview';
     }
   };
@@ -149,6 +162,9 @@ export default function FarmerDashboard() {
       case 'products': return 'Manage your product listings';
       case 'analytics': return 'Track your performance metrics';
       case 'settings': return 'Configure your account preferences';
+      case 'kyc': return 'Verify your identity to start selling';
+      case 'profile': return 'Manage your personal details';
+      case 'support': return 'Get help with your issues';
       default: return `Welcome back, ${profile?.full_name || 'Farmer'}!`;
     }
   };
@@ -171,10 +187,16 @@ export default function FarmerDashboard() {
         return <AnalyticsContent products={products} />;
       case 'settings':
         return <SettingsContent />;
+      case 'kyc':
+        return <KYCContent />;
+      case 'profile':
+        return <ProfileContent />;
+      case 'support':
+        return <SupportContent />;
       default:
         return (
-          <OverviewContent 
-            products={products} 
+          <OverviewContent
+            products={products}
             onAddProduct={() => setIsAddDialogOpen(true)}
             onNavigate={handleNavigate}
           />
@@ -186,7 +208,7 @@ export default function FarmerDashboard() {
     <SidebarProvider>
       <div className="flex min-h-screen w-full bg-gradient-to-br from-background via-muted/20 to-background">
         <DashboardSidebar />
-        
+
         <div className="flex-1 flex flex-col">
           <DashboardHeader
             title={getTabTitle()}

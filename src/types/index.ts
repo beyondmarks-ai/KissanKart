@@ -4,6 +4,7 @@ export interface Product {
   description: string | null;
   category: 'vegetable' | 'fruit';
   price: number;
+  original_price?: number; // MRP before discount
   unit: string;
   image_url: string | null;
   farmer_id: string;

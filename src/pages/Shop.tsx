@@ -4,6 +4,7 @@ import { Footer } from '@/components/Footer';
 import { CartPanel } from '@/components/CartPanel';
 import { ProductCard } from '@/components/ProductCard';
 import { CategoryFilter } from '@/components/CategoryFilter';
+import { BannerSlider } from '@/components/BannerSlider';
 import { mockProducts } from '@/data/mockProducts';
 import { Search, Loader2 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
@@ -19,6 +20,13 @@ export default function ShopPage() {
   useEffect(() => {
     async function fetchProducts() {
       setLoading(true);
+
+      // TEMPORARY: Use mock products to show discounts
+      // TODO: Update database products to include original_price field
+      setProducts(mockProducts);
+      setLoading(false);
+
+      /* Original database fetch - commented out temporarily
       const { data, error } = await supabase
         .from('products')
         .select('*')
@@ -35,7 +43,7 @@ export default function ShopPage() {
         // Show mock products if no real products exist
         setProducts(mockProducts);
       }
-      setLoading(false);
+      */
     }
 
     fetchProducts();
@@ -52,8 +60,13 @@ export default function ShopPage() {
     <div className="flex min-h-screen flex-col">
       <Navbar />
       <CartPanel />
-      
-      <main className="flex-1 pt-[108px]">
+
+      {/* Banner Slider */}
+      <div className="pt-[108px]">
+        <BannerSlider />
+      </div>
+
+      <main className="flex-1">
         {/* Header */}
         <section className="border-b border-border bg-gradient-to-b from-primary/5 to-transparent py-12">
           <div className="container mx-auto px-4">
@@ -64,7 +77,7 @@ export default function ShopPage() {
               <p className="mb-8 text-muted-foreground">
                 Browse our selection of farm-fresh vegetables and fruits, directly from local farmers.
               </p>
-              
+
               {/* Search */}
               <div className="relative mb-6">
                 <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
@@ -87,7 +100,7 @@ export default function ShopPage() {
         </section>
 
         {/* Products Grid */}
-        <section className="py-12">
+        <section id="products" className="py-12">
           <div className="container mx-auto px-4">
             {loading ? (
               <div className="flex items-center justify-center py-16">

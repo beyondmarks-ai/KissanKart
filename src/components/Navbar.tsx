@@ -59,6 +59,7 @@ export function Navbar() {
   const navLinks = [
     { href: getLocalizedPath('/'), label: t('nav.home') },
     { href: getLocalizedPath('/shop'), label: t('nav.shop') },
+    { href: getLocalizedPath('/support'), label: t('nav.support') },
   ];
 
   const isActive = (path: string) => {
@@ -280,8 +281,8 @@ export function Navbar() {
                       <Link
                         to={link.href}
                         className={`px-4 py-3 rounded-lg text-sm font-medium transition-colors ${isActive(link.href)
-                            ? 'text-primary bg-primary/5'
-                            : 'text-foreground/80 hover:text-primary hover:bg-primary/5'
+                          ? 'text-primary bg-primary/5'
+                          : 'text-foreground/80 hover:text-primary hover:bg-primary/5'
                           }`}
                         onClick={() => setIsMobileMenuOpen(false)}
                       >

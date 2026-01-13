@@ -17,6 +17,7 @@ import Dashboard from "./pages/Dashboard";
 import Checkout from "./pages/Checkout";
 import FarmDetail from "./pages/FarmDetail";
 import NotFound from "./pages/NotFound";
+import Support from "./pages/Support";
 
 const queryClient = new QueryClient();
 
@@ -56,6 +57,7 @@ const App = () => {
                     <Route path="/auth" element={<Auth />} />
                     <Route path="/dashboard" element={<Dashboard />} />
                     <Route path="/checkout" element={<Checkout />} />
+                    <Route path="/support" element={<Support />} />
                     <Route path="*" element={<NotFound />} />
                   </Routes>
                 </LanguageProvider>

@@ -25,6 +25,15 @@ export function ProductCard({ product }: ProductCardProps) {
   const isFarmer = profile?.role === 'farmer';
   const isOwnProduct = isFarmer && user?.id === product.farmer_id;
 
+  // Debug: Log product pricing info
+  useEffect(() => {
+    console.log(`Product: ${product.name}`, {
+      price: product.price,
+      original_price: product.original_price,
+      hasDiscount: product.original_price && product.original_price > product.price
+    });
+  }, [product]);
+
   useEffect(() => {
     setImageLoaded(false);
     setImageSrc(product.image_url || '/placeholder.svg');
@@ -63,7 +72,7 @@ export function ProductCard({ product }: ProductCardProps) {
     e.stopPropagation();
     setQuantity((q) => q + 1);
   };
-  
+
   const decrementQuantity = (e: React.MouseEvent) => {
     e.stopPropagation();
     setQuantity((q) => (q > 1 ? q - 1 : 1));
@@ -78,9 +87,9 @@ export function ProductCard({ product }: ProductCardProps) {
 
   return (
     <>
-      <div className="relative overflow-hidden rounded-lg sm:rounded-xl border border-border bg-card shadow-card transition-shadow duration-300 hover:shadow-card-hover">
+      <div className="relative flex flex-col h-full overflow-hidden rounded-lg sm:rounded-xl border border-border bg-card shadow-card transition-shadow duration-300 hover:shadow-card-hover">
         {/* Clickable Image Area */}
-        <div 
+        <div
           className="relative aspect-square cursor-pointer overflow-hidden bg-muted"
           onClick={openModal}
         >
@@ -101,7 +110,14 @@ export function ProductCard({ product }: ProductCardProps) {
               setImageLoaded(true);
             }}
           />
-          <div className="absolute right-1 top-1 sm:right-3 sm:top-3">
+          <div className="absolute right-1 top-1 sm:right-3 sm:top-3 flex flex-col gap-1 sm:gap-2 items-end">
+            {/* Sale Badge for discounted products */}
+            {product.original_price && product.original_price > product.price && (
+              <span className="inline-block rounded-full bg-gradient-to-r from-red-600 to-orange-600 px-2 py-1 text-[10px] sm:px-3 sm:py-1.5 sm:text-xs font-bold text-white shadow-lg animate-pulse">
+                SALE
+              </span>
+            )}
+            {/* Category Badge */}
             <span
               className={cn(
                 'inline-block rounded-full px-1.5 py-0.5 text-[10px] sm:px-3 sm:py-1.5 sm:text-xs font-semibold capitalize shadow-md',
@@ -149,12 +165,39 @@ export function ProductCard({ product }: ProductCardProps) {
             </span>
           </div>
 
-          <div className="flex items-center justify-between">
-            <div>
-              <span className="text-sm sm:text-xl font-bold text-primary">
-                ₹{product.price}
-              </span>
-              <span className="text-[10px] sm:text-sm text-muted-foreground">/{product.unit}</span>
+          <div className="flex items-start justify-between gap-2 min-h-[3rem] sm:min-h-[3.5rem]">
+            <div className="flex flex-col gap-0.5">
+              {product.original_price && product.original_price > product.price ? (
+                <>
+                  {/* Discounted Price Display */}
+                  <div className="flex items-center gap-1.5 sm:gap-2">
+                    <span className="text-sm sm:text-xl font-bold text-primary">
+                      ₹{product.price}
+                    </span>
+                    <span className="text-[10px] sm:text-sm text-muted-foreground">/{product.unit}</span>
+                  </div>
+                  <div className="flex items-center gap-1.5 sm:gap-2">
+                    <span className="text-[10px] sm:text-sm text-muted-foreground line-through decoration-red-500">
+                      ₹{product.original_price}
+                    </span>
+                    <span className="inline-flex items-center rounded-full bg-gradient-to-r from-red-500 to-orange-500 px-1.5 py-0.5 text-[9px] sm:text-xs font-bold text-white shadow-sm">
+                      {Math.round(((product.original_price - product.price) / product.original_price) * 100)}% OFF
+                    </span>
+                  </div>
+                </>
+              ) : (
+                <>
+                  {/* Regular Price Display - with spacer to match height */}
+                  <div className="flex items-center gap-1">
+                    <span className="text-sm sm:text-xl font-bold text-primary">
+                      ₹{product.price}
+                    </span>
+                    <span className="text-[10px] sm:text-sm text-muted-foreground">/{product.unit}</span>
+                  </div>
+                  {/* Invisible spacer to maintain consistent height */}
+                  <div className="h-[1.25rem] sm:h-[1.5rem]"></div>
+                </>
+              )}
             </div>
           </div>
 

@@ -24,6 +24,7 @@ const translations: Record<Language, Record<string, string>> = {
     'nav.about': 'About',
     'nav.contact': 'Contact',
     'nav.dashboard': 'Dashboard',
+    'nav.support': 'Support',
     'nav.signIn': 'Sign In',
     'nav.signOut': 'Sign Out',
 
@@ -161,6 +162,7 @@ const translations: Record<Language, Record<string, string>> = {
     'nav.about': 'हमारे बारे में',
     'nav.contact': 'संपर्क',
     'nav.dashboard': 'डैशबोर्ड',
+    'nav.support': 'सपोर्ट',
     'nav.signIn': 'लॉगिन',
     'nav.signOut': 'लॉग आउट',
 
@@ -298,6 +300,7 @@ const translations: Record<Language, Record<string, string>> = {
     'nav.about': 'ನಮ್ಮ ಬಗ್ಗೆ',
     'nav.contact': 'ಸಂಪರ್ಕಿಸಿ',
     'nav.dashboard': 'ಡ್ಯಾಶ್‌ಬೋರ್ಡ್',
+    'nav.support': 'ಸಪೋರ್ಟ್',
     'nav.signIn': 'ಲಾಗಿನ್',
     'nav.signOut': 'ಲಾಗೌಟ್',
 

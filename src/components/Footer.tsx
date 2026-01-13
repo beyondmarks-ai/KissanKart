@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Leaf, Mail, Phone, MapPin, Store, ShoppingBag, BarChart3, Package } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
+import kissanKartLogo from '@/assets/kissankart-logo.png';
 import {
   Dialog,
   DialogContent,
@@ -33,13 +34,20 @@ export function Footer() {
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
             {/* Brand */}
             <div>
-              <Link to={getLocalizedPath('/')} className="mb-4 flex items-center gap-2">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-primary-foreground">
-                  <Leaf className="h-6 w-6" />
+              <Link to={getLocalizedPath('/')} className="mb-4 flex items-center gap-3">
+                <img
+                  src={kissanKartLogo}
+                  alt="KissanKart"
+                  className="h-10 w-10 sm:h-12 sm:w-12 object-contain"
+                />
+                <div className="flex flex-col">
+                  <span className="text-xl font-bold text-foreground leading-none">
+                    Kissan<span className="text-primary">Kart</span>
+                  </span>
+                  <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
+                    {t('hero.badge')}
+                  </span>
                 </div>
-                <span className="text-xl font-bold text-foreground">
-                  Kissan<span className="text-primary">Kart</span>
-                </span>
               </Link>
               <p className="mb-4 text-sm text-muted-foreground">
                 {t('footer.tagline')}
@@ -140,7 +148,7 @@ export function Footer() {
               {t('farmerDialog.description')}
             </DialogDescription>
           </DialogHeader>
-          
+
           <div className="space-y-4 py-4">
             <ul className="space-y-3">
               <li className="flex items-start gap-3">
@@ -174,7 +182,7 @@ export function Footer() {
             <Button variant="outline" onClick={() => setShowFarmerDialog(false)} className="w-full sm:w-auto">
               {t('farmerDialog.stay')}
             </Button>
-            <Button 
+            <Button
               onClick={() => {
                 setShowFarmerDialog(false);
                 window.location.href = 'mailto:support@kissankart.com?subject=Request to Switch to Farmer Account';

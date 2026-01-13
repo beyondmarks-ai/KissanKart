@@ -16,15 +16,18 @@ type UserRole = 'farmer' | 'customer' | null;
 export default function AuthPage() {
   const [searchParams] = useSearchParams();
   const urlRole = searchParams.get('role') as 'farmer' | 'customer' | null;
-  
+
   const [selectedRole, setSelectedRole] = useState<UserRole>(urlRole);
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
+  const [shopName, setShopName] = useState('');
+  const [address, setAddress] = useState('');
+  const [phone, setPhone] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [errors, setErrors] = useState<{ email?: string; password?: string; fullName?: string }>({});
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   const { signIn, signUp, user, profile } = useAuth();
   const navigate = useNavigate();
@@ -40,31 +43,37 @@ export default function AuthPage() {
   }, [user, profile, navigate]);
 
   const validateForm = () => {
-    const newErrors: { email?: string; password?: string; fullName?: string } = {};
-    
+    const newErrors: Record<string, string> = {};
+
     const emailResult = emailSchema.safeParse(email);
     if (!emailResult.success) {
       newErrors.email = emailResult.error.errors[0].message;
     }
-    
+
     const passwordResult = passwordSchema.safeParse(password);
     if (!passwordResult.success) {
       newErrors.password = passwordResult.error.errors[0].message;
     }
-    
+
     if (!isLogin && !fullName.trim()) {
       newErrors.fullName = 'Full name is required';
     }
-    
+
+    if (!isLogin && selectedRole === 'farmer') {
+      if (!shopName.trim()) newErrors.shopName = 'Shop/Farm name is required';
+      if (!phone.trim()) newErrors.phone = 'Phone number is required';
+      if (!address.trim()) newErrors.address = 'Address is required';
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm() || !selectedRole) return;
-    
+
     setLoading(true);
 
     try {
@@ -80,7 +89,13 @@ export default function AuthPage() {
           toast.success('Welcome back!');
         }
       } else {
-        const { error } = await signUp(email, password, fullName, selectedRole);
+        const { error } = await signUp(
+          email,
+          password,
+          fullName,
+          selectedRole,
+          selectedRole === 'farmer' ? { shopName, address, phone } : undefined
+        );
         if (error) {
           if (error.message.includes('already registered')) {
             toast.error('This email is already registered. Please sign in instead.');
@@ -165,34 +180,31 @@ export default function AuthPage() {
             {roleOptions.map((option) => {
               const Icon = option.icon;
               const isCustomer = option.id === 'customer';
-              
+
               return (
                 <button
                   key={option.id}
                   onClick={() => setSelectedRole(option.id)}
-                  className={`group relative overflow-hidden rounded-2xl border-2 bg-card p-6 text-left shadow-md transition-all duration-300 hover:shadow-xl ${
-                    isCustomer
-                      ? 'border-primary/20 hover:border-primary hover:shadow-primary/10'
-                      : 'border-kisan-orange/20 hover:border-kisan-orange hover:shadow-kisan-orange/10'
-                  }`}
+                  className={`group relative overflow-hidden rounded-2xl border-2 bg-card p-6 text-left shadow-md transition-all duration-300 hover:shadow-xl ${isCustomer
+                    ? 'border-primary/20 hover:border-primary hover:shadow-primary/10'
+                    : 'border-kisan-orange/20 hover:border-kisan-orange hover:shadow-kisan-orange/10'
+                    }`}
                 >
                   {/* Background Gradient */}
                   <div
-                    className={`absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100 ${
-                      isCustomer
-                        ? 'bg-gradient-to-br from-primary/5 to-transparent'
-                        : 'bg-gradient-to-br from-kisan-orange/5 to-transparent'
-                    }`}
+                    className={`absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100 ${isCustomer
+                      ? 'bg-gradient-to-br from-primary/5 to-transparent'
+                      : 'bg-gradient-to-br from-kisan-orange/5 to-transparent'
+                      }`}
                   />
 
                   <div className="relative">
                     {/* Icon */}
                     <div
-                      className={`mb-4 flex h-14 w-14 items-center justify-center rounded-xl transition-transform duration-300 group-hover:scale-110 ${
-                        isCustomer
-                          ? 'bg-primary/10 text-primary'
-                          : 'bg-kisan-orange/10 text-kisan-orange'
-                      }`}
+                      className={`mb-4 flex h-14 w-14 items-center justify-center rounded-xl transition-transform duration-300 group-hover:scale-110 ${isCustomer
+                        ? 'bg-primary/10 text-primary'
+                        : 'bg-kisan-orange/10 text-kisan-orange'
+                        }`}
                     >
                       <Icon className="h-7 w-7" />
                     </div>
@@ -201,9 +213,8 @@ export default function AuthPage() {
                     <div className="mb-3">
                       <h3 className="text-xl font-bold text-foreground">{option.title}</h3>
                       <p
-                        className={`text-sm font-medium ${
-                          isCustomer ? 'text-primary' : 'text-kisan-orange'
-                        }`}
+                        className={`text-sm font-medium ${isCustomer ? 'text-primary' : 'text-kisan-orange'
+                          }`}
                       >
                         {option.subtitle}
                       </p>
@@ -217,9 +228,8 @@ export default function AuthPage() {
                       {option.features.map((feature) => (
                         <li key={feature} className="flex items-center gap-2 text-sm text-foreground/80">
                           <CheckCircle2
-                            className={`h-4 w-4 ${
-                              isCustomer ? 'text-primary' : 'text-kisan-orange'
-                            }`}
+                            className={`h-4 w-4 ${isCustomer ? 'text-primary' : 'text-kisan-orange'
+                              }`}
                           />
                           {feature}
                         </li>
@@ -228,9 +238,8 @@ export default function AuthPage() {
 
                     {/* CTA */}
                     <div
-                      className={`flex items-center gap-2 font-medium ${
-                        isCustomer ? 'text-primary' : 'text-kisan-orange'
-                      }`}
+                      className={`flex items-center gap-2 font-medium ${isCustomer ? 'text-primary' : 'text-kisan-orange'
+                        }`}
                     >
                       Continue as {option.title}
                       <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
@@ -278,9 +287,8 @@ export default function AuthPage() {
             {/* Header */}
             <div className="mb-8 text-center">
               <div
-                className={`mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full ${
-                  isCustomer ? 'bg-primary/10' : 'bg-kisan-orange/10'
-                }`}
+                className={`mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full ${isCustomer ? 'bg-primary/10' : 'bg-kisan-orange/10'
+                  }`}
               >
                 <currentRole.icon
                   className={`h-8 w-8 ${isCustomer ? 'text-primary' : 'text-kisan-orange'}`}
@@ -309,13 +317,12 @@ export default function AuthPage() {
                     setIsLogin(tab.id);
                     setErrors({});
                   }}
-                  className={`flex-1 rounded-lg py-2.5 text-sm font-medium transition-all ${
-                    isLogin === tab.id
-                      ? isCustomer
-                        ? 'bg-primary text-primary-foreground shadow-sm'
-                        : 'bg-kisan-orange text-white shadow-sm'
-                      : 'text-muted-foreground hover:text-foreground'
-                  }`}
+                  className={`flex-1 rounded-lg py-2.5 text-sm font-medium transition-all ${isLogin === tab.id
+                    ? isCustomer
+                      ? 'bg-primary text-primary-foreground shadow-sm'
+                      : 'bg-kisan-orange text-white shadow-sm'
+                    : 'text-muted-foreground hover:text-foreground'
+                    }`}
                 >
                   {tab.label}
                 </button>
@@ -324,20 +331,71 @@ export default function AuthPage() {
 
             <form onSubmit={handleSubmit} className="space-y-4">
               {!isLogin && (
-                <div className="space-y-2">
-                  <Label htmlFor="fullName">Full Name</Label>
-                  <Input
-                    id="fullName"
-                    type="text"
-                    placeholder="Enter your full name"
-                    value={fullName}
-                    onChange={(e) => setFullName(e.target.value)}
-                    className={errors.fullName ? 'border-destructive' : ''}
-                  />
-                  {errors.fullName && (
-                    <p className="text-xs text-destructive">{errors.fullName}</p>
+                <>
+                  <div className="space-y-2">
+                    <Label htmlFor="fullName">Full Name</Label>
+                    <Input
+                      id="fullName"
+                      type="text"
+                      placeholder="Enter your full name"
+                      value={fullName}
+                      onChange={(e) => setFullName(e.target.value)}
+                      className={errors.fullName ? 'border-destructive' : ''}
+                    />
+                    {errors.fullName && (
+                      <p className="text-xs text-destructive">{errors.fullName}</p>
+                    )}
+                  </div>
+
+                  {!isCustomer && (
+                    <>
+                      <div className="space-y-2">
+                        <Label htmlFor="shopName">Farm / Shop Name</Label>
+                        <Input
+                          id="shopName"
+                          type="text"
+                          placeholder="e.g. Krishna's Organic Farm"
+                          value={shopName}
+                          onChange={(e) => setShopName(e.target.value)}
+                          className={errors.shopName ? 'border-destructive' : ''}
+                        />
+                        {errors.shopName && (
+                          <p className="text-xs text-destructive">{errors.shopName}</p>
+                        )}
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="phone">Business Phone</Label>
+                        <Input
+                          id="phone"
+                          type="tel"
+                          placeholder="+91 98765 43210"
+                          value={phone}
+                          onChange={(e) => setPhone(e.target.value)}
+                          className={errors.phone ? 'border-destructive' : ''}
+                        />
+                        {errors.phone && (
+                          <p className="text-xs text-destructive">{errors.phone}</p>
+                        )}
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="address">Address / Location</Label>
+                        <Input
+                          id="address"
+                          type="text"
+                          placeholder="e.g. Bangalore Rural"
+                          value={address}
+                          onChange={(e) => setAddress(e.target.value)}
+                          className={errors.address ? 'border-destructive' : ''}
+                        />
+                        {errors.address && (
+                          <p className="text-xs text-destructive">{errors.address}</p>
+                        )}
+                      </div>
+                    </>
                   )}
-                </div>
+                </>
               )}
 
               <div className="space-y-2">
@@ -381,28 +439,26 @@ export default function AuthPage() {
 
               <Button
                 type="submit"
-                className={`w-full ${
-                  !isCustomer ? 'bg-kisan-orange hover:bg-kisan-orange/90' : ''
-                }`}
+                className={`w-full ${!isCustomer ? 'bg-kisan-orange hover:bg-kisan-orange/90' : ''
+                  }`}
                 size="lg"
                 disabled={loading}
               >
                 {loading
                   ? 'Please wait...'
                   : isLogin
-                  ? 'Sign In'
-                  : `Create ${currentRole.title} Account`}
+                    ? 'Sign In'
+                    : `Create ${currentRole.title} Account`}
               </Button>
             </form>
 
             {/* Role indicator badge */}
             <div className="mt-6 flex items-center justify-center gap-2">
               <span
-                className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium ${
-                  isCustomer
-                    ? 'bg-primary/10 text-primary'
-                    : 'bg-kisan-orange/10 text-kisan-orange'
-                }`}
+                className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium ${isCustomer
+                  ? 'bg-primary/10 text-primary'
+                  : 'bg-kisan-orange/10 text-kisan-orange'
+                  }`}
               >
                 <currentRole.icon className="h-3 w-3" />
                 {currentRole.title} Account
