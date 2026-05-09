@@ -15,7 +15,6 @@ import { SettingsContent } from '@/components/dashboard/SettingsContent';
 import { KYCContent } from '@/components/dashboard/KYCContent';
 import { ProfileContent } from '@/components/dashboard/ProfileContent';
 import { SupportContent } from '@/components/dashboard/SupportContent';
-import { getProductsByFarmId } from '@/data/mockFarms';
 
 export default function FarmerDashboard() {
   const { user, profile, loading: authLoading } = useAuth();
@@ -28,7 +27,14 @@ export default function FarmerDashboard() {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
+  const farmerShopName =
+    ((profile as any)?.shop_name as string | undefined) ||
+    ((profile as any)?.farm_name as string | undefined) ||
+    (user?.user_metadata?.shopName as string | undefined) ||
+    '';
+
   const [formData, setFormData] = useState({
+    farm_name: '',
     name: '',
     description: '',
     category: 'vegetable' as 'vegetable' | 'fruit',
@@ -54,15 +60,18 @@ export default function FarmerDashboard() {
     }
   }, [user, profile]);
 
-  const fetchProducts = async () => {
-    // TEMPORARY: Use mock data for "farm-1" to simulate "My Products"
-    // This ensures we only show products "listed" by the logged-in farmer
-    setLoading(false);
-    setProducts(getProductsByFarmId('farm-1'));
+  useEffect(() => {
+    if (!farmerShopName) return;
 
-    /* Original Supabase Query - Commented out for demo
+    setFormData((current) =>
+      current.farm_name ? current : { ...current, farm_name: farmerShopName }
+    );
+  }, [farmerShopName]);
+
+  const fetchProducts = async () => {
     if (!user) return;
-    setLoading(false);
+
+    setLoading(true);
     const { data, error } = await supabase
       .from('products')
       .select('*')
@@ -75,30 +84,38 @@ export default function FarmerDashboard() {
     } else {
       setProducts(data as Product[]);
     }
-    */
+
+    setLoading(false);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
 
-    if (!formData.name || !formData.price) {
+    if (!formData.farm_name.trim() || !formData.name || !formData.price) {
       toast.error('Please fill in required fields');
       return;
     }
 
     setSubmitting(true);
 
-    const { error } = await supabase.from('products').insert({
+    const productPayload = {
       name: formData.name,
       description: formData.description || null,
       category: formData.category,
       price: parseFloat(formData.price),
       unit: formData.unit,
       image_url: formData.image_url || null,
+      farm_name: formData.farm_name.trim(),
+      farm_location:
+        ((profile as any)?.address as string | undefined) ||
+        (user.user_metadata?.address as string | undefined) ||
+        null,
       farmer_id: user.id,
       is_available: true,
-    });
+    };
+
+    const { error } = await (supabase.from('products') as any).insert(productPayload);
 
     if (error) {
       console.error('Error adding product:', error);
@@ -106,6 +123,7 @@ export default function FarmerDashboard() {
     } else {
       toast.success('Product added successfully!');
       setFormData({
+        farm_name: formData.farm_name,
         name: '',
         description: '',
         category: 'vegetable',
@@ -174,6 +192,17 @@ export default function FarmerDashboard() {
   };
 
   const renderContent = () => {
+    if (loading) {
+      return (
+        <div className="flex min-h-[320px] items-center justify-center">
+          <div className="text-center">
+            <div className="mx-auto mb-4 h-10 w-10 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+            <p className="text-sm text-muted-foreground">Loading products...</p>
+          </div>
+        </div>
+      );
+    }
+
     switch (currentTab) {
       case 'products':
         return (

@@ -7,6 +7,8 @@ export interface Product {
   original_price?: number; // MRP before discount
   unit: string;
   image_url: string | null;
+  farm_name?: string | null;
+  farm_location?: string | null;
   farmer_id: string;
   is_available: boolean;
   created_at: string;

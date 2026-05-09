@@ -17,6 +17,7 @@ import {
 } from '@/components/ui/dialog';
 
 interface FormData {
+  farm_name: string;
   name: string;
   description: string;
   category: 'vegetable' | 'fruit';
@@ -49,6 +50,19 @@ export function AddProductDialog({
           <DialogTitle>Add New Product</DialogTitle>
         </DialogHeader>
         <form onSubmit={onSubmit} className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="farm_name">Farm / Shop Name *</Label>
+            <Input
+              id="farm_name"
+              value={formData.farm_name}
+              onChange={(e) =>
+                setFormData({ ...formData, farm_name: e.target.value })
+              }
+              placeholder="e.g., Krishna's Organic Farm"
+              required
+            />
+          </div>
+
           <div className="space-y-2">
             <Label htmlFor="name">Product Name *</Label>
             <Input

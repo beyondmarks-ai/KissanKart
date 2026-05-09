@@ -5,7 +5,6 @@ import { CartPanel } from '@/components/CartPanel';
 import { ProductCard } from '@/components/ProductCard';
 import { CategoryFilter } from '@/components/CategoryFilter';
 import { BannerSlider } from '@/components/BannerSlider';
-import { mockProducts } from '@/data/mockProducts';
 import { Search, Loader2 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { supabase } from '@/integrations/supabase/client';
@@ -21,12 +20,6 @@ export default function ShopPage() {
     async function fetchProducts() {
       setLoading(true);
 
-      // TEMPORARY: Use mock products to show discounts
-      // TODO: Update database products to include original_price field
-      setProducts(mockProducts);
-      setLoading(false);
-
-      /* Original database fetch - commented out temporarily
       const { data, error } = await supabase
         .from('products')
         .select('*')
@@ -35,15 +28,12 @@ export default function ShopPage() {
 
       if (error) {
         console.error('Error fetching products:', error);
-        // Fallback to mock products if DB fails
-        setProducts(mockProducts);
-      } else if (data && data.length > 0) {
-        setProducts(data as Product[]);
+        setProducts([]);
       } else {
-        // Show mock products if no real products exist
-        setProducts(mockProducts);
+        setProducts((data || []) as Product[]);
       }
-      */
+
+      setLoading(false);
     }
 
     fetchProducts();

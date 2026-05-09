@@ -6,6 +6,8 @@ import { Footer } from '@/components/Footer';
 import { CartPanel } from '@/components/CartPanel';
 import { FarmCard } from '@/components/FarmCard';
 import { mockFarms } from '@/data/mockFarms';
+import { supabase } from '@/integrations/supabase/client';
+import { Farm, Product } from '@/types';
 import { ArrowRight, Loader2, Store, Package, BarChart3, ShoppingBag } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -64,6 +66,7 @@ const Index = () => {
   const { t, getLocalizedPath } = useLanguage();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
+  const [allFarms, setAllFarms] = useState<Farm[]>([]);
 
   const [showFarmerDialog, setShowFarmerDialog] = useState(false);
   const isLoggedInCustomer = user && profile?.role === 'customer';
@@ -83,14 +86,67 @@ const Index = () => {
   };
 
   useEffect(() => {
-    // Simulate loading for farms
-    const timer = setTimeout(() => setLoading(false), 500);
-    return () => clearTimeout(timer);
-  }, []);
+    async function fetchFarmerShops() {
+      setLoading(true);
 
-  // Separate featured and regular farms
-  const featuredFarms = mockFarms.filter(farm => farm.is_featured);
-  const allFarms = mockFarms;
+      const { data, error } = await supabase
+        .from('products')
+        .select('*')
+        .eq('is_available', true)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error fetching farm shops:', error);
+        setAllFarms(mockFarms);
+        setLoading(false);
+        return;
+      }
+
+      const products = (data || []) as Product[];
+      const farmerIds = Array.from(new Set(products.map((product) => product.farmer_id)));
+
+      const { data: profileData } = farmerIds.length
+        ? await (supabase as any).rpc('get_public_farmer_shops', { farmer_ids: farmerIds })
+        : { data: [] };
+
+      const profilesById = new Map(
+        ((profileData || []) as Array<{
+          id: string;
+          full_name?: string | null;
+          shop_name?: string | null;
+          farm_name?: string | null;
+          address?: string | null;
+        }>).map((profile) => [profile.id, profile])
+      );
+
+      const farms = farmerIds.map((farmerId, index) => {
+        const farmerProducts = products.filter((product) => product.farmer_id === farmerId);
+        const profile = profilesById.get(farmerId);
+        const firstProduct = farmerProducts[0];
+        const specialties = Array.from(new Set(farmerProducts.map((product) => product.category)));
+        const productFarmName = farmerProducts.find((product) => product.farm_name)?.farm_name;
+        const productFarmLocation = farmerProducts.find((product) => product.farm_location)?.farm_location;
+
+        return {
+          id: farmerId,
+          name: productFarmName || profile?.shop_name || profile?.farm_name || profile?.full_name || `Farmer Shop ${index + 1}`,
+          description: `${farmerProducts.length} fresh ${farmerProducts.length === 1 ? 'product' : 'products'} available from this farmer.`,
+          image_url: firstProduct?.image_url || '/farms/green-valley-farms.png',
+          rating: 4.8,
+          review_count: farmerProducts.length,
+          delivery_time: '25-40 min',
+          location: productFarmLocation || profile?.address || 'Local farm',
+          is_featured: index < 2,
+          specialty: specialties.length ? specialties : ['Fresh Produce'],
+        } satisfies Farm;
+      });
+
+      setAllFarms(farms.length ? farms : mockFarms);
+      setLoading(false);
+    }
+
+    fetchFarmerShops();
+  }, []);
 
   return (
     <div className="flex min-h-screen flex-col">

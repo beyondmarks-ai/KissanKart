@@ -1,13 +1,7 @@
-import { Trash2, Edit, MoreHorizontal, Package, Plus } from 'lucide-react';
+import { Package, Plus, Store, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 import { Product } from '@/types';
-import { cn } from '@/lib/utils';
+import { ProductCard } from '@/components/ProductCard';
 
 interface ProductsTableProps {
   products: Product[];
@@ -37,139 +31,42 @@ export function ProductsTable({ products, onDelete, onAddProduct }: ProductsTabl
   }
 
   return (
-    <div className="rounded-xl border border-border bg-card overflow-hidden">
-      <div className="border-b border-border bg-muted/30 px-6 py-4">
-        <h2 className="font-semibold text-foreground">
-          Your Products ({products.length})
-        </h2>
+    <div className="space-y-6">
+      <div className="flex flex-col gap-4 rounded-xl border border-border bg-card p-5 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-center gap-3">
+          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary">
+            <Store className="h-5 w-5" />
+          </div>
+          <div>
+            <h2 className="font-semibold text-foreground">Your Shop Products</h2>
+            <p className="text-sm text-muted-foreground">
+              These cards match how customers see your products in the shop.
+            </p>
+          </div>
+        </div>
+        <Button className="gap-2" onClick={onAddProduct}>
+          <Plus className="h-4 w-4" />
+          Add Product
+        </Button>
       </div>
 
-      {/* Desktop Table */}
-      <div className="hidden md:block">
-        <table className="w-full">
-          <thead>
-            <tr className="border-b border-border bg-muted/20 text-left text-sm text-muted-foreground">
-              <th className="px-6 py-3 font-medium">Product</th>
-              <th className="px-6 py-3 font-medium">Category</th>
-              <th className="px-6 py-3 font-medium">Price</th>
-              <th className="px-6 py-3 font-medium">Status</th>
-              <th className="px-6 py-3 font-medium text-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-border">
-            {products.map((product) => (
-              <tr key={product.id} className="transition-colors hover:bg-muted/30">
-                <td className="px-6 py-4">
-                  <div className="flex items-center gap-3">
-                    <img
-                      src={product.image_url || '/placeholder.svg'}
-                      alt={product.name}
-                      className="h-12 w-12 rounded-lg object-cover"
-                    />
-                    <div>
-                      <p className="font-medium text-foreground">{product.name}</p>
-                      <p className="text-sm text-muted-foreground line-clamp-1">
-                        {product.description || 'No description'}
-                      </p>
-                    </div>
-                  </div>
-                </td>
-                <td className="px-6 py-4">
-                  <span
-                    className={cn(
-                      'inline-flex rounded-full px-2.5 py-1 text-xs font-medium capitalize',
-                      product.category === 'vegetable'
-                        ? 'bg-primary/10 text-primary'
-                        : 'bg-kisan-orange/10 text-kisan-orange'
-                    )}
-                  >
-                    {product.category}
-                  </span>
-                </td>
-                <td className="px-6 py-4">
-                  <span className="font-semibold text-foreground">
-                    ₹{product.price}
-                  </span>
-                  <span className="text-sm text-muted-foreground">/{product.unit}</span>
-                </td>
-                <td className="px-6 py-4">
-                  <span
-                    className={cn(
-                      'inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium',
-                      product.is_available
-                        ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
-                        : 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
-                    )}
-                  >
-                    <span
-                      className={cn(
-                        'h-1.5 w-1.5 rounded-full',
-                        product.is_available ? 'bg-green-500' : 'bg-red-500'
-                      )}
-                    />
-                    {product.is_available ? 'Active' : 'Inactive'}
-                  </span>
-                </td>
-                <td className="px-6 py-4 text-right">
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="icon">
-                        <MoreHorizontal className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem className="gap-2">
-                        <Edit className="h-4 w-4" />
-                        Edit
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        className="gap-2 text-destructive focus:text-destructive"
-                        onClick={() => onDelete(product.id)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                        Delete
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      {/* Mobile List */}
-      <div className="divide-y divide-border md:hidden">
+      <div className="grid grid-cols-2 gap-2 sm:gap-6 lg:grid-cols-3 xl:grid-cols-4">
         {products.map((product) => (
-          <div key={product.id} className="flex items-center gap-4 p-4">
-            <img
-              src={product.image_url || '/placeholder.svg'}
-              alt={product.name}
-              className="h-14 w-14 rounded-lg object-cover"
-            />
-            <div className="flex-1 min-w-0">
-              <p className="font-medium text-foreground truncate">{product.name}</p>
-              <div className="mt-1 flex items-center gap-2">
-                <span
-                  className={cn(
-                    'rounded-full px-2 py-0.5 text-xs font-medium capitalize',
-                    product.category === 'vegetable'
-                      ? 'bg-primary/10 text-primary'
-                      : 'bg-kisan-orange/10 text-kisan-orange'
-                  )}
-                >
-                  {product.category}
-                </span>
-                <span className="text-sm font-semibold text-primary">
-                  ₹{product.price}/{product.unit}
-                </span>
-              </div>
+          <div key={product.id} className="group relative">
+            <ProductCard product={product} />
+
+            <div className="pointer-events-none absolute left-2 top-2 z-10 sm:left-3 sm:top-3">
+              <span className="rounded-full bg-background/90 px-2 py-1 text-[10px] font-semibold text-primary shadow-sm backdrop-blur">
+                {product.is_available ? 'Live' : 'Hidden'}
+              </span>
             </div>
+
             <Button
-              variant="ghost"
+              variant="destructive"
               size="icon"
-              className="text-muted-foreground hover:text-destructive shrink-0"
+              className="absolute bottom-2 right-2 z-10 h-8 w-8 shadow-lg sm:bottom-3 sm:right-3 sm:opacity-0 sm:transition-opacity sm:group-hover:opacity-100"
               onClick={() => onDelete(product.id)}
+              aria-label={`Delete ${product.name}`}
             >
               <Trash2 className="h-4 w-4" />
             </Button>
